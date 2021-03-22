@@ -51,18 +51,16 @@ namespace WeatherAPI
             {
                 using (WebClient client = new WebClient())
                 {
-
+                    // Downloading the JSON string to var json, then deserializing it as a dynamic object in var data;
                     var json = client.DownloadString(baseUrl);
                     var data = JsonConvert.DeserializeObject<dynamic>(json);
                     //if there is data, print it
                     if (data != null)
                     {
-                        // Console.WriteLine(data.main);
                         WeatherForecast WeatherData = new WeatherForecast();
                         WeatherData.temp = data.main.temp;
                         WeatherData.winddegrees = data.wind.deg;
                         WeatherData.weather = data.weather[0].main;
-                        //Console.WriteLine(WeatherData.temp+" "+WeatherData.winddegrees+" "+WeatherData.weather);
                         WorkWeatherData(CityName, WeatherData);
                     }
                     //else, if there is no data, print "no data"
