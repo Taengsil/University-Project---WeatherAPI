@@ -1,8 +1,6 @@
 ﻿using System;
-using System.IO;
-using System.Net.Http;
+using System.Net;
 using System.Threading.Tasks;
-using System.Text.Json;
 using Newtonsoft.Json;
 
 namespace WeatherAPI
@@ -51,33 +49,30 @@ namespace WeatherAPI
             string baseUrl = startUrl + CityName + "," + StateCode + "&units=imperial&appid=" + apiKey;
             try
             {
-                using (HttpClient client = new HttpClient())
+                using (WebClient client = new WebClient())
                 {
-                    //await is used here to execute the using statements in order; 
-                    using (HttpResponseMessage res = await client.GetAsync(baseUrl))
-                    //connection to baseUrl from client.GetAsync(baseUrl)
-                    {
-                        using (HttpContent content = res.Content)
-                        {
-                            var data = await content.ReadAsStringAsync();
 
-                            //if there is data, print it
-                            if (data != null)
-                            {
-                                WeatherForecast WeatherData = new WeatherForecast();
-                                WeatherClass WeatherRawData = new WeatherClass();
-                                WeatherRawData = JsonConvert.DeserializeObject<WeatherClass>(data);
-                                Console.WriteLine("{0}", data);
-                                // WorkWeatherData(CityName, WeatherData);
-                            }
-                            //else, if there is no data, print "no data"
-                            else
-                            {
-                                Console.WriteLine("No data");
-                            }
-                        }
+                    var json = client.DownloadString(baseUrl);
+                    var data = JsonConvert.DeserializeObject<dynamic>(json);
+                    //if there is data, print it
+                    if (data != null)
+                    {
+                        // Console.WriteLine(data.main);
+                        WeatherForecast WeatherData = new WeatherForecast();
+                        WeatherData.temp = data.main.temp;
+                        WeatherData.winddegrees = data.wind.deg;
+                        WeatherData.weather = data.weather[0].main;
+                        //Console.WriteLine(WeatherData.temp+" "+WeatherData.winddegrees+" "+WeatherData.weather);
+                        WorkWeatherData(CityName, WeatherData);
+                    }
+                    //else, if there is no data, print "no data"
+                    else
+                    {
+                        Console.WriteLine("No data");
                     }
                 }
+                    
+              
 
             }
             catch (Exception exception)
@@ -88,12 +83,12 @@ namespace WeatherAPI
         }
         public static void WorkWeatherData(string CityName, WeatherForecast WeatherData)
         {
-            Console.WriteLine(CityName + " weather:\n");
+            Console.WriteLine("\n"+CityName + " weather:");
 
             //conversion to celsius
             float tempcelsius = (WeatherData.temp - 32) * 5 / 9;
             //degrees fahrenheit + celsius print
-            Console.WriteLine("It's currently {0} degrees Fahrenheit out there. That's {0} degrees Celsius.", WeatherData.temp, tempcelsius);
+            Console.WriteLine("It's currently " + WeatherData.temp + " degrees Fahrenheit out there.\nThat's " + tempcelsius + " degrees Celsius.\n");
             //returns wind direction as string
             WeatherData.winddirection = GetWindDirection(WeatherData.winddegrees);
             Console.WriteLine("The wind is currently blowing {0}.\n", WeatherData.winddirection);
@@ -109,6 +104,10 @@ namespace WeatherAPI
             if (WeatherData.weather.ToLower() == "rain" || WeatherData.weather.ToLower() == "snow" || WeatherData.weather.ToLower() == "extreme")
             {
                 Console.WriteLine("You should bring an umbrella.\n");
+            }
+            if (WeatherData.weather.ToLower() == "clouds")
+            {
+                Console.WriteLine("It's cloudy outside.\n");
             }
         }
         public static string GetWindDirection(int winddegrees)
