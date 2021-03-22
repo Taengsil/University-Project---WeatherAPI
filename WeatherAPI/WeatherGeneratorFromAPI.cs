@@ -1,4 +1,10 @@
-﻿using System;
+﻿/* 
+ * File Author: Ciorba Bogdan
+ * Last Modified: 22.03.2021 23:22
+**/ 
+
+
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -7,30 +13,32 @@ namespace WeatherAPI
 {
     class WeatherGeneratorFromAPI
     {
+        private string CityName;
+        private string StateCode;
+
         static void Main()
         {
             /* generating cityname and statecode as empty strings for later use */
-            string CityName, StateCode;
             CityName = StateCode = string.Empty;
 
             /* reads user keyboard input and formats it properly */
-            ReadInput(ref CityName, ref StateCode);
+            ReadInput();
 
             WeatherForecast WeatherData = new WeatherForecast();
 
             /* connects to API and generates WeatherData */
-            GetWeather(CityName, StateCode, ref WeatherData);
+            GetWeather(ref WeatherData);
 
             /* generates output messages */
-            WorkWeatherData(CityName, WeatherData);
+            WorkWeatherData(WeatherData);
         }
 
-        public static void ReadInput(ref string CityName, ref string StateCode)
+        /* Reads user keyboard input and formats it properly */
+        private static void ReadInput()
         {
             Console.WriteLine("Enter a city name and a state code:");
-            /** In the e-mail, the input is in one line. However, the user could type one line individually. The following will
+            /** in the e-mail, the input is in one line. However, the user could type one line individually. The following will
             * check if the string is inputted in one go ("Chicago, IL") and split it into the correct variables, or if the user
-            *
             * inserts them separately, the program will pick up the second line correctly. **/
             CityName = Console.ReadLine();
             string StateName;
@@ -52,22 +60,23 @@ namespace WeatherAPI
             StateCode = GetStateCode(StateName);
         }
 
-        public static string GetStateCode(string StateName)
+        /** Processing state abbreviation (AR) to state code (US-AR) 
+         Openweather uses ISO 3166 codes, therefore we convert it to ISO 3166 **/
+        private static string GetStateCode(string StateName)
         {
-            /* processing state abbreviation (AR) to state code (US-AR) */
+            
             StateName = StateName.ToUpper();
 
-            /* openweather uses ISO 3166 codes, therefore we convert it to ISO 3166*/
             string StateCode = "US-" + StateName;
             return StateCode;
         }
 
-        public static void GetWeather(string CityName, string StateCode, ref WeatherForecast WeatherData)
+        /* Downloading the JSON string to var json, then deserializing it as a dynamic object in var data; */
+        private static void GetWeather(ref WeatherForecast WeatherData)
         {
             string baseUrl = "";
-            GenerateUrl(CityName, StateCode, ref baseUrl);
+            GenerateUrl(ref baseUrl);
 
-            /* Downloading the JSON string to var json, then deserializing it as a dynamic object in var data; */
             var json = Fetch(baseUrl).Result;
             var data = JsonConvert.DeserializeObject<dynamic>(json);
 
@@ -83,7 +92,9 @@ namespace WeatherAPI
             }
         }
 
-        public static void GenerateUrl(string CityName, string StateCode, ref string baseUrl)
+
+        /* Fetching API Key, Generating baseUrl */
+        private static void GenerateUrl(ref string baseUrl)
         {   
             /* fetching api key */
             string apiKey = "";
@@ -107,7 +118,7 @@ namespace WeatherAPI
             return content;
         }
 
-        public static void GenerateWeatherData(ref WeatherForecast WeatherData, ref dynamic data)
+        private static void GenerateWeatherData(ref WeatherForecast WeatherData, ref dynamic data)
         {
             /* transforming from data object to WeatherData object */
             WeatherData.temp = data.main.temp;
@@ -115,7 +126,7 @@ namespace WeatherAPI
             WeatherData.weather = data.weather[0].main;
         }
 
-        public static void WorkWeatherData(string CityName, WeatherForecast WeatherData)
+        private static void WorkWeatherData(WeatherForecast WeatherData)
         {
             /* formatting helper, just shows City Name and weather */
             Console.WriteLine("\n"+CityName + " weather:");
@@ -145,7 +156,7 @@ namespace WeatherAPI
             DetermineClouds(WeatherData.weather);
         }
 
-        public static void DetermineTemperature(int temperature)
+        private static void DetermineTemperature(int temperature)
         {
             /* conversion to celsius */
             float tempcelsius = (temperature - 32) * 5 / 9;
@@ -153,7 +164,7 @@ namespace WeatherAPI
             Console.WriteLine("It's currently " + temperature + " degrees Fahrenheit out there.\nThat's " + tempcelsius + " degrees Celsius.\n");
         }
 
-        public static void DetermineNiceDay(int temperature, string weather)
+        private static void DetermineNiceDay(int temperature, string weather)
         {
             /* threshold for nice day message set as variable */
             string nicedaythreshold = "Clear Sky";
@@ -164,19 +175,19 @@ namespace WeatherAPI
             }
         }
 
-        public static void DetermineUmbrella (string weather)
+        /* defining what bad weather is for umbrella message */
+        private static void DetermineUmbrella (string weather)
         {
-            /* defining what bad weather is for umbrella message */
             string[] badweather = { "snow", "rain", "extreme" };
             if (weather.ToLower() == badweather[0] || weather.ToLower() == badweather[1] || weather.ToLower() == badweather[2])
             {
                 Console.WriteLine("You should bring an umbrella.\n");
             }
         }
-        
-        public static void DetermineClouds (string weather)
+
+        /* defining what clouds are for cloudy message */
+        private static void DetermineClouds (string weather)
         {
-            /* defining what clouds are for cloudy message */
             string cloudthreshold = "clouds";
             if (weather.ToLower() == cloudthreshold)
             {
@@ -184,9 +195,9 @@ namespace WeatherAPI
             }
         }
 
-        public static void DetermineCoat (int temperature)
+        /* defines what coat threshold is for coat message */
+        private static void DetermineCoat (int temperature)
         {
-            /* defines what coat threshold is for coat message */
             int coatthreshold = 60;
             if (temperature < coatthreshold)
             {
@@ -194,9 +205,9 @@ namespace WeatherAPI
             }
         }
 
-        public static void CalculateWindDirection(int winddegrees, ref string winddirection)
+        /* checks which way the wind blows by comparing which part of the circle the orientation is */
+        private static void CalculateWindDirection(int winddegrees, ref string winddirection)
         {
-            /* checks which way the wind blows by comparing which part of the circle the orientation is */
             if (winddegrees == 0)
             {
                 /* |^ */
