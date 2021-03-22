@@ -6,7 +6,7 @@
         public int winddegrees { get; set; }
         public string weather { get; set; }
 
-        public void GetWeather(string CityName, string StateCode)
+        public void GetWeather()
         {
             ;
         }
