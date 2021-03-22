@@ -71,7 +71,8 @@ namespace WeatherAPI
         }
         public static void GenerateUrl(string CityName, string StateCode, ref string baseUrl)
         {
-            string apiKey = "b54f94bdd520de56cb775654e9f83954";
+            string apiKey = "";
+            apiKey = System.IO.File.ReadAllText(@"F:\Visual Studio Community Projects\WeatherAPI\api.txt");
             string startUrl = "http://api.openweathermap.org/data/2.5/weather?q=";
             baseUrl = startUrl + CityName + "," + StateCode + "&units=imperial&appid=" + apiKey;
         }
