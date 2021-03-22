@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace WeatherAPI
@@ -14,7 +13,7 @@ namespace WeatherAPI
         }
     class Program
     {
-        static async Task Main()
+        static void Main()
         {
             Console.WriteLine("Enter a city name and a state code:");
             // In the e-mail, the input is in one line. However, the user could type one line individually. The following will
@@ -27,13 +26,13 @@ namespace WeatherAPI
                 CityName = word[0];
                 string StateName = word[1];
                 string StateCode = GetStateCode(StateName);
-                await GetWeather(CityName, StateCode);
+                GetWeather(CityName, StateCode);
             }
             else
             {
                 string StateName = Console.ReadLine();
                 string StateCode = GetStateCode(StateName);
-                await GetWeather(CityName, StateCode);
+                GetWeather(CityName, StateCode);
             }
         }
         public static string GetStateCode(string StateName)
@@ -42,7 +41,7 @@ namespace WeatherAPI
             string StateCode = "US-" + StateName;
             return StateCode;
         }
-        public static async Task GetWeather(string CityName, string StateCode)
+        public static void GetWeather(string CityName, string StateCode)
         {
             string apiKey = "b54f94bdd520de56cb775654e9f83954";
             string startUrl = "http://api.openweathermap.org/data/2.5/weather?q=";
