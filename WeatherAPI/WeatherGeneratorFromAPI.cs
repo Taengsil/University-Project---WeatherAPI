@@ -13,14 +13,12 @@ namespace WeatherAPI
 {
     class WeatherGeneratorFromAPI
     {
-        private string CityName;
-        private string StateCode;
+        /* generating cityname and statecode as class variables for later use */
+        private static string CityName;
+        private static string StateCode;
 
         static void Main()
         {
-            /* generating cityname and statecode as empty strings for later use */
-            CityName = StateCode = string.Empty;
-
             /* reads user keyboard input and formats it properly */
             ReadInput();
 
