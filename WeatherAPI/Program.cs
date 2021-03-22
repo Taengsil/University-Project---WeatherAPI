@@ -45,6 +45,7 @@ namespace WeatherAPI
         }
         public static string GetStateCode(string StateName)
         {
+            // processing state abbreviation (AR) to state code (US-AR)
             StateName = StateName.ToUpper();
             string StateCode = "US-" + StateName;
             return StateCode;
@@ -58,7 +59,7 @@ namespace WeatherAPI
             var json = Fetch(baseUrl).Result;
             var data = JsonConvert.DeserializeObject<dynamic>(json);
 
-            //if there is data, print it
+            //if there is data, generate it following the WeatherData object instructions
             if (data != null)
             {
                 GenerateWeatherData(ref WeatherData, ref data);
@@ -70,7 +71,8 @@ namespace WeatherAPI
             }
         }
         public static void GenerateUrl(string CityName, string StateCode, ref string baseUrl)
-        {
+        {   
+            //accessing api using api key
             string apiKey = "";
             apiKey = System.IO.File.ReadAllText(@"F:\Visual Studio Community Projects\WeatherAPI\api.txt");
             string startUrl = "http://api.openweathermap.org/data/2.5/weather?q=";
