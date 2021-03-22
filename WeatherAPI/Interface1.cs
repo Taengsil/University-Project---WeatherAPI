@@ -14,6 +14,6 @@ namespace WeatherAPI
         static int winddegrees;
         static string winddirection;
         static string weather;
-        //void GetWeather();
+        void GetWeather(string CityName, string StateCode);
     }
 }

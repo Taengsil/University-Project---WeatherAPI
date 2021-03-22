@@ -10,9 +10,11 @@ namespace WeatherAPI
     {
         public int temp { get; set; }
         public int winddegrees { get; set; }
-        public string winddirection { get; set; }
         public string weather { get; set; }
 
-        //public override void GetWeather();
+        public void GetWeather(string CityName, string StateCode)
+        {
+            ;
+        }
     }
 }

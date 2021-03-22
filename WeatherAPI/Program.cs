@@ -7,27 +7,41 @@ namespace WeatherAPI
 {
     class Program
     {
-        static async Task Main()
+        static void Main()
+        {
+            string CityName, StateCode;
+            CityName = StateCode = string.Empty;
+
+            //Reads user input
+            ReadInput(ref CityName, ref StateCode);
+
+            WeatherForecast WeatherData = new WeatherForecast();
+            
+            //Connects to API and generates WeatherData
+            GetWeather(CityName, StateCode, ref WeatherData);
+            
+            //Generates output
+            WorkWeatherData(CityName, WeatherData);
+        }
+        public static void ReadInput(ref string CityName, ref string StateCode)
         {
             Console.WriteLine("Enter a city name and a state code:");
             // In the e-mail, the input is in one line. However, the user could type one line individually. The following will
             // check if the string is inputted in one go ("Chicago, IL") and split it into the correct variables, or if the user
             // inserts them separately, the program will pick up the second line correctly.
-            string CityName = Console.ReadLine();
+            CityName = Console.ReadLine();
+            string StateName;
             if (CityName.Contains(' '))
             {
                 string[] word = CityName.Split(' ');
                 CityName = word[0];
-                string StateName = word[1];
-                string StateCode = GetStateCode(StateName);
-                await GetWeather(CityName, StateCode);
+                StateName = word[1];
             }
             else
             {
-                string StateName = Console.ReadLine();
-                string StateCode = GetStateCode(StateName);
-                await GetWeather(CityName, StateCode);
+                StateName = Console.ReadLine();
             }
+            StateCode = GetStateCode(StateName);
         }
         public static string GetStateCode(string StateName)
         {
@@ -35,44 +49,37 @@ namespace WeatherAPI
             string StateCode = "US-" + StateName;
             return StateCode;
         }
-        public static async Task GetWeather(string CityName, string StateCode)
+        public static void GetWeather(string CityName, string StateCode, ref WeatherForecast WeatherData)
+        {
+            string baseUrl = "";
+            GenerateUrl(CityName, StateCode, ref baseUrl);
+
+            // Downloading the JSON string to var json, then deserializing it as a dynamic object in var data;
+            var json = Fetch(baseUrl).Result;
+            var data = JsonConvert.DeserializeObject<dynamic>(json);
+
+            //if there is data, print it
+            if (data != null)
+            {
+                GenerateWeatherData(ref WeatherData, ref data);
+            }
+            //else, if there is no data, print "no data"
+            else
+            {
+                Console.WriteLine("No data");
+            }
+        }
+        public static void GenerateUrl(string CityName, string StateCode, ref string baseUrl)
         {
             string apiKey = "b54f94bdd520de56cb775654e9f83954";
             string startUrl = "http://api.openweathermap.org/data/2.5/weather?q=";
-            string baseUrl = startUrl + CityName + "," + StateCode + "&units=imperial&appid=" + apiKey;
-
-            try
-            {
-                using (HttpClient client = new HttpClient())
-                {
-                    using (HttpResponseMessage res = await client.GetAsync(baseUrl))
-                    {
-                        using (HttpContent content = res.Content)
-                        {
-                            // Downloading the JSON string to var json, then deserializing it as a dynamic object in var data;
-                            var json = await content.ReadAsStringAsync();
-                            var data = JsonConvert.DeserializeObject<dynamic>(json);
-                            //if there is data, print it
-                            if (data != null)
-                            {
-                                WeatherForecast WeatherData = new WeatherForecast();
-                                GenerateWeatherData(ref WeatherData, ref data);
-                                WorkWeatherData(CityName, WeatherData);
-                            }
-                            //else, if there is no data, print "no data"
-                            else
-                            {
-                                Console.WriteLine("No data");
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine("Exception Hit:");
-                Console.WriteLine(exception);
-            }
+            baseUrl = startUrl + CityName + "," + StateCode + "&units=imperial&appid=" + apiKey;
+        }
+        static async Task<string> Fetch(string url)
+        {
+            using var client = new HttpClient();
+            var content = await client.GetStringAsync(url);
+            return content;
         }
         public static void GenerateWeatherData(ref WeatherForecast WeatherData, ref dynamic data)
         {
@@ -91,10 +98,11 @@ namespace WeatherAPI
             /**input: wind degrees, wind direction
              * returns wind direction as string
              * output: WeatherData.winddirection**/
-            CalculateWindDirection(WeatherData.winddegrees, WeatherData.winddirection);
+            string winddirection="";
+            CalculateWindDirection(WeatherData.winddegrees, ref winddirection);
 
 
-            Console.WriteLine("The wind is currently blowing {0}.\n", WeatherData.winddirection);
+            Console.WriteLine("The wind is currently blowing {0}.\n", winddirection);
 
             //based on the temperature and weather condition, sends a message that it is a nice day outside
             DetermineNiceDay(WeatherData.temp, WeatherData.weather);
@@ -148,7 +156,7 @@ namespace WeatherAPI
                 Console.WriteLine("You should bring a coat.\n");
             }
         }
-        public static void CalculateWindDirection(int winddegrees, string winddirection)
+        public static void CalculateWindDirection(int winddegrees, ref string winddirection)
         {
             if (winddegrees == 0)
             {
@@ -195,7 +203,7 @@ namespace WeatherAPI
                 // |^
                 winddirection = "North";
             }
-            winddirection = "Invalid wind direction data";
+            else winddirection = "Invalid wind direction data";
         }
     }
 }
