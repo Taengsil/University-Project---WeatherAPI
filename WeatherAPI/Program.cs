@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace WeatherAPI
 {
-    class Program
+    public class Program
     {
-        static async Task Main(string[] args)
+        public static async Task Main(string[] args)
         {
             /* reads user keyboard input and formats it properly */
             WeatherGeneratorFromAPI.ReadInput(args);
@@ -17,6 +17,7 @@ namespace WeatherAPI
             await WeatherGeneratorFromAPI.GetWeather();
 
             /* generates output messages */
+            if (WeatherGeneratorFromAPI.inputIsCorrect == true)
             WeatherGeneratorFromAPI.WorkWeatherData();
         }
     }

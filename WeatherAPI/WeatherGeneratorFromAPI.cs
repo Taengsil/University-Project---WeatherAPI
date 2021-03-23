@@ -1,6 +1,6 @@
 ﻿/* 
  * File Author: Ciorba Bogdan
- * Last Modified: 23.03.2021 15:53
+ * Last Modified: 23.03.2021 18:38
 **/ 
 
 
@@ -14,11 +14,12 @@ using Newtonsoft.Json;
 
 namespace WeatherAPI
 {
-    class WeatherGeneratorFromAPI
+    public class WeatherGeneratorFromAPI
     {
         /* generating cityname and statecode as class variables for later use */
-        private static string CityName;
-        private static string StateCode;
+        public static string CityName;
+        public static string StateCode;
+        public static bool inputIsCorrect = true;
 
         /* generating WeatherData as new WeatherForecast object */
         private static WeatherForecast WeatherData = new WeatherForecast();
@@ -40,6 +41,7 @@ namespace WeatherAPI
                 CityName = Console.ReadLine();
                 Console.WriteLine("Enter a city name and a state code:");
             }
+
             /** in the e-mail, the input is in one line. However, the user could type one line individually. The following will
             * check if the string is inputted in one go ("Chicago, IL") and split it into the correct variables, or if the user
             * inserts them separately, the program will pick up the second line correctly. **/
@@ -47,6 +49,7 @@ namespace WeatherAPI
             /** if the Cityname contains both Cityname and state name, split it and generate it
             * otherwise, read the state name
             **/
+
             if (CityName.Contains(' ') && notReadFromConsole == true)
             {
                 string[] word = CityName.Split(' ');
@@ -56,6 +59,16 @@ namespace WeatherAPI
             else if (notReadFromConsole == true)
             {
                 StateName = Console.ReadLine();
+                /** if user only inputted CityName, but then adds a space. 
+                * example input: 
+                * Chicago
+                * IL IL
+                * **/
+                if (StateName.Contains(' '))
+                {
+                    string[] word = CityName.Split(' ');
+                    StateName = word[0];
+                }
             }
             /* transforms state abbreviation (AR) to state code (US-AR) */
             StateCode = GetStateCode(StateName);
@@ -77,18 +90,26 @@ namespace WeatherAPI
         {
             string baseUrl = "";
             GenerateUrl(ref baseUrl);
-            var json = Fetch(baseUrl).Result;
-            await PrintData(json);
-            Dataclass data = JsonConvert.DeserializeObject<Dataclass>(json);
-            /* if there is data, generate it following the WeatherData object instructions */
-            if (data != null)
+            try
             {
-                ExtractWeatherData(data);
+                var json = Fetch(baseUrl).Result;
+                await PrintData(json);
+                Dataclass data = JsonConvert.DeserializeObject<Dataclass>(json);
+                /* if there is data, generate it following the WeatherData object instructions */
+                if (data != null)
+                {
+                    ExtractWeatherData(data);
+                }
+                /* else, if there is no data, print "no data" **/
+                else
+                {
+                    Console.WriteLine("No data");
+                }
             }
-            /* else, if there is no data, print "no data" **/
-            else
+            catch (Exception InvalidData)
             {
-                Console.WriteLine("No data");
+                inputIsCorrect = false;
+                Console.WriteLine("\nException caught: Invalid City");
             }
         }
 
