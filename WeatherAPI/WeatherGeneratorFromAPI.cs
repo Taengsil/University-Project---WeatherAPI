@@ -110,7 +110,7 @@ namespace WeatherAPI
         }
 
         /* Fetches string from url and returns value as string*/
-        static async Task<string> Fetch(string url)
+        private static async Task<string> Fetch(string url)
         {
             /* fetching string from url */
             using var client = new HttpClient();
@@ -123,14 +123,23 @@ namespace WeatherAPI
         /* Prints the output of the data object as a pretty-printed json */
         private static async Task PrintData (string json)
         {
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = true
-            };
+            /** The commented code uses System.Text.Json to create
+             *  a serialized .JSON file, however it does not 
+             *  pretty-print and replaces the '\n' character with
+             *  '\u0020'                                          **/
+            //JsonSerializerOptions options = new JsonSerializerOptions
+            //{
+            //    WriteIndented = true
+            //};
             string path = Directory.GetParent(System.Reflection.Assembly.GetExecutingAssembly().Location).FullName;
             string fileName = Path.Combine(path, "apidata.json");
-            using FileStream createstream = File.Create(fileName);
-            await System.Text.Json.JsonSerializer.SerializeAsync(createstream, json, options);
+            using (StreamWriter file = File.CreateText(fileName))
+            {
+                Newtonsoft.Json.JsonSerializer serializer = new Newtonsoft.Json.JsonSerializer();
+                serializer.Serialize(file, json);
+            }
+            //using FileStream createstream = File.Create(fileName);
+            //await System.Text.Json.JsonSerializer.SerializeAsync(createstream, json, options);
         }
 
         /* Transforming from data object to WeatherData object */
