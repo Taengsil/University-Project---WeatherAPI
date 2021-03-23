@@ -19,24 +19,12 @@ namespace WeatherAPI
         /* generating cityname and statecode as class variables for later use */
         private static string CityName;
         private static string StateCode;
-        
+
         /* generating WeatherData as new WeatherForecast object */
         private static WeatherForecast WeatherData = new WeatherForecast();
 
-        static async Task Main()
-        {
-            /* reads user keyboard input and formats it properly */
-            ReadInput();
-
-            /* connects to API and generates WeatherData */
-            await GetWeather();
-
-            /* generates output messages */
-            WorkWeatherData();
-        }
-
         /* Reads user keyboard input and formats it properly */
-        private static void ReadInput()
+        public static void ReadInput()
         {
             Console.WriteLine("Enter a city name and a state code:");
             /** in the e-mail, the input is in one line. However, the user could type one line individually. The following will
@@ -74,7 +62,7 @@ namespace WeatherAPI
         }
 
         /* Downloading the JSON string to var json, then deserializing it as a dynamic object in var data; */
-        private static async Task GetWeather()
+        public static async Task GetWeather()
         {
             string baseUrl = "";
             GenerateUrl(ref baseUrl);
@@ -144,7 +132,7 @@ namespace WeatherAPI
         }
 
         /* Method for the messages */
-        private static void WorkWeatherData()
+        public static void WorkWeatherData()
         {
             /* formatting helper, just shows City Name and weather */
             Console.WriteLine("\n"+CityName + " weather:");
