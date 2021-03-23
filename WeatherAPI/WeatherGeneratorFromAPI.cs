@@ -5,8 +5,11 @@
 
 
 using System;
+using System.IO;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
 namespace WeatherAPI
@@ -16,19 +19,20 @@ namespace WeatherAPI
         /* generating cityname and statecode as class variables for later use */
         private static string CityName;
         private static string StateCode;
+        
+        /* generating WeatherData as new WeatherForecast object */
+        private static WeatherForecast WeatherData = new WeatherForecast();
 
-        static void Main()
+        static async Task Main()
         {
             /* reads user keyboard input and formats it properly */
             ReadInput();
 
-            WeatherForecast WeatherData = new WeatherForecast();
-
             /* connects to API and generates WeatherData */
-            GetWeather(ref WeatherData);
+            await GetWeather();
 
             /* generates output messages */
-            WorkWeatherData(WeatherData);
+            WorkWeatherData();
         }
 
         /* Reads user keyboard input and formats it properly */
@@ -70,18 +74,18 @@ namespace WeatherAPI
         }
 
         /* Downloading the JSON string to var json, then deserializing it as a dynamic object in var data; */
-        private static void GetWeather(ref WeatherForecast WeatherData)
+        private static async Task GetWeather()
         {
             string baseUrl = "";
             GenerateUrl(ref baseUrl);
-
             var json = Fetch(baseUrl).Result;
+            await PrintData(json);
             var data = JsonConvert.DeserializeObject<dynamic>(json);
 
             /* if there is data, generate it following the WeatherData object instructions */
             if (data != null)
             {
-                GenerateWeatherData(ref WeatherData, ref data);
+                ExtractWeatherData(data);
             }
             /* else, if there is no data, print "no data" **/
             else
@@ -90,20 +94,20 @@ namespace WeatherAPI
             }
         }
 
-
         /* Fetching API Key, Generating baseUrl */
         private static void GenerateUrl(ref string baseUrl)
-        {   
-            /* fetching api key */
-            string apiKey = "";
-            apiKey = System.IO.File.ReadAllText(@"F:\Visual Studio Community Projects\WeatherAPI\api.txt");
-            
+        {
+            /* fetching data from appsettings.json */
+            var config = new ConfigurationBuilder()
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                .AddJsonFile("appsettings.json").Build();
+
+            var section = config.GetSection(nameof(WeatherClientConfig));
+            var weatherClientConfig = section.Get<WeatherClientConfig>();
+
             /* generating baseUrl */
-            string startUrl = "http://api.openweathermap.org/data/2.5/weather?q=";
-            
-            /* options must always have &appid= at the end */
-            string options = "&units=imperial&appid=";
-            baseUrl = startUrl + CityName + "," + StateCode + options + apiKey;
+
+            baseUrl = weatherClientConfig.WeatherAPIUrl + CityName + "," + StateCode + weatherClientConfig.Options + weatherClientConfig.apiKey;
         }
 
         static async Task<string> Fetch(string url)
@@ -116,15 +120,28 @@ namespace WeatherAPI
             return content;
         }
 
-        private static void GenerateWeatherData(ref WeatherForecast WeatherData, ref dynamic data)
+        /* Prints the output of the data object as a pretty-printed json */
+        private static async Task PrintData (dynamic data)
         {
-            /* transforming from data object to WeatherData object */
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+            };
+            using FileStream createstream = File.Create("apidata.json");
+            await System.Text.Json.JsonSerializer.SerializeAsync(createstream, data);
+        }
+
+        /* transforming from data object to WeatherData object */
+        private static void ExtractWeatherData(dynamic data)
+        {
+            
             WeatherData.temp = data.main.temp;
             WeatherData.winddegrees = data.wind.deg;
             WeatherData.weather = data.weather[0].main;
         }
 
-        private static void WorkWeatherData(WeatherForecast WeatherData)
+        /* Method for the messages */
+        private static void WorkWeatherData()
         {
             /* formatting helper, just shows City Name and weather */
             Console.WriteLine("\n"+CityName + " weather:");
