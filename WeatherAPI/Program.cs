@@ -8,10 +8,10 @@ namespace WeatherAPI
 {
     class Program
     {
-        static async Task Main()
+        static async Task Main(string[] args)
         {
             /* reads user keyboard input and formats it properly */
-            WeatherGeneratorFromAPI.ReadInput();
+            WeatherGeneratorFromAPI.ReadInput(args);
 
             /* connects to API and generates WeatherData */
             await WeatherGeneratorFromAPI.GetWeather();

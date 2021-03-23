@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "WeatherAPI": {
+      "commandName": "Project",
+      "commandLineArgs": "Chicago IL"
+    }
+  }
+}

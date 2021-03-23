@@ -1,6 +1,6 @@
 ﻿/* 
  * File Author: Ciorba Bogdan
- * Last Modified: 22.03.2021 23:22
+ * Last Modified: 23.03.2021 14:27
 **/ 
 
 
@@ -24,25 +24,36 @@ namespace WeatherAPI
         private static WeatherForecast WeatherData = new WeatherForecast();
 
         /* Reads user keyboard input and formats it properly */
-        public static void ReadInput()
+        public static void ReadInput(string[] args)
         {
-            Console.WriteLine("Enter a city name and a state code:");
+            string StateName="";
+            bool notReadFromConsole = true;
+            if (args[0] != null && args[1] != null)
+            {
+                CityName = args[0];
+                StateName = args[1];
+                notReadFromConsole = false;
+                Console.WriteLine("City name has been read from console as {0}, State name has been read from console as {1}", CityName, StateName);
+            }
+            else
+            {
+                CityName = Console.ReadLine();
+                Console.WriteLine("Enter a city name and a state code:");
+            }
             /** in the e-mail, the input is in one line. However, the user could type one line individually. The following will
             * check if the string is inputted in one go ("Chicago, IL") and split it into the correct variables, or if the user
             * inserts them separately, the program will pick up the second line correctly. **/
-            CityName = Console.ReadLine();
-            string StateName;
-
+            
             /** if the Cityname contains both Cityname and state name, split it and generate it
             * otherwise, read the state name
             **/
-            if (CityName.Contains(' '))
+            if (CityName.Contains(' ') && notReadFromConsole)
             {
                 string[] word = CityName.Split(' ');
                 CityName = word[0];
                 StateName = word[1];
             }
-            else
+            else if (notReadFromConsole == true)
             {
                 StateName = Console.ReadLine();
             }
