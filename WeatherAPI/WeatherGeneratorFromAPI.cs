@@ -110,6 +110,7 @@ namespace WeatherAPI
             baseUrl = weatherClientConfig.WeatherAPIUrl + CityName + "," + StateCode + weatherClientConfig.Options + weatherClientConfig.apiKey;
         }
 
+        /* Fetches string from url and returns value as string*/
         static async Task<string> Fetch(string url)
         {
             /* fetching string from url */
@@ -121,17 +122,19 @@ namespace WeatherAPI
         }
 
         /* Prints the output of the data object as a pretty-printed json */
-        private static async Task PrintData (dynamic data)
+        private static async Task PrintData (string json)
         {
             var options = new JsonSerializerOptions
             {
-                WriteIndented = true,
+                WriteIndented = true
             };
-            using FileStream createstream = File.Create("apidata.json");
-            await System.Text.Json.JsonSerializer.SerializeAsync(createstream, data);
+            string path = Directory.GetParent(System.Reflection.Assembly.GetExecutingAssembly().Location).FullName;
+            string fileName = Path.Combine(path, "apidata.json");
+            using FileStream createstream = File.Create(fileName);
+            await System.Text.Json.JsonSerializer.SerializeAsync(createstream, json, options);
         }
 
-        /* transforming from data object to WeatherData object */
+        /* Transforming from data object to WeatherData object */
         private static void ExtractWeatherData(dynamic data)
         {
             
@@ -171,6 +174,7 @@ namespace WeatherAPI
             DetermineClouds(WeatherData.weather);
         }
 
+        /* Prints out a message with the temperature in Fahrenheit and Celsius */
         private static void DetermineTemperature(int temperature)
         {
             /* conversion to celsius */
@@ -179,6 +183,7 @@ namespace WeatherAPI
             Console.WriteLine("It's currently " + temperature + " degrees Fahrenheit out there.\nThat's " + tempcelsius + " degrees Celsius.\n");
         }
 
+        /* Sets a threshold for a nice day and then sends a message if the conditions meet the threshold */
         private static void DetermineNiceDay(int temperature, string weather)
         {
             /* threshold for nice day message set as variable */
@@ -190,7 +195,7 @@ namespace WeatherAPI
             }
         }
 
-        /* defining what bad weather is for umbrella message */
+        /* Defining what bad weather is for umbrella message */
         private static void DetermineUmbrella (string weather)
         {
             string[] badweather = { "snow", "rain", "extreme" };
@@ -200,7 +205,7 @@ namespace WeatherAPI
             }
         }
 
-        /* defining what clouds are for cloudy message */
+        /* Defining what clouds are for cloudy message */
         private static void DetermineClouds (string weather)
         {
             string cloudthreshold = "clouds";
@@ -210,7 +215,7 @@ namespace WeatherAPI
             }
         }
 
-        /* defines what coat threshold is for coat message */
+        /* Defines what coat threshold is for coat message */
         private static void DetermineCoat (int temperature)
         {
             int coatthreshold = 60;
@@ -220,7 +225,7 @@ namespace WeatherAPI
             }
         }
 
-        /* checks which way the wind blows by comparing which part of the circle the orientation is */
+        /* Checks which way the wind blows by comparing which part of the circle the orientation is */
         private static void CalculateWindDirection(int winddegrees, ref string winddirection)
         {
             if (winddegrees == 0)

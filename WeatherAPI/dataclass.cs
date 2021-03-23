@@ -1,0 +1,7 @@
+﻿namespace WeatherAPI
+{
+    class dataclass
+    {
+
+    }
+}
