@@ -33,9 +33,9 @@ namespace WeatherAPI
                 CityName = args[0];
                 StateName = args[1];
                 notReadFromConsole = false;
-                Console.WriteLine("City name has been read from console as {0}, State name has been read from console as {1}", CityName, StateName);
+                Console.WriteLine("City name has been read from console as {0}; State name has been read from console as {1}", CityName, StateName);
             }
-            else
+            else if (args[0] == null && args[1] == null)
             {
                 CityName = Console.ReadLine();
                 Console.WriteLine("Enter a city name and a state code:");
@@ -47,7 +47,7 @@ namespace WeatherAPI
             /** if the Cityname contains both Cityname and state name, split it and generate it
             * otherwise, read the state name
             **/
-            if (CityName.Contains(' ') && notReadFromConsole)
+            if (CityName.Contains(' ') && notReadFromConsole == true)
             {
                 string[] word = CityName.Split(' ');
                 CityName = word[0];
@@ -79,8 +79,7 @@ namespace WeatherAPI
             GenerateUrl(ref baseUrl);
             var json = Fetch(baseUrl).Result;
             await PrintData(json);
-            var data = JsonConvert.DeserializeObject<dynamic>(json);
-
+            Dataclass data = JsonConvert.DeserializeObject<Dataclass>(json);
             /* if there is data, generate it following the WeatherData object instructions */
             if (data != null)
             {
@@ -183,16 +182,17 @@ namespace WeatherAPI
         }
 
         /* Prints out a message with the temperature in Fahrenheit and Celsius */
-        private static void DetermineTemperature(int temperature)
+        private static void DetermineTemperature(double temperature)
         {
             /* conversion to celsius */
-            float tempcelsius = (temperature - 32) * 5 / 9;
+            double tempcelsius = (temperature - 32) * 5 / 9;
+            tempcelsius = (double)System.Math.Round(tempcelsius, 2);
             /* degrees fahrenheit + celsius print */
-            Console.WriteLine("It's currently " + temperature + " degrees Fahrenheit out there.\nThat's " + tempcelsius + " degrees Celsius.\n");
+            Console.WriteLine("It's currently " + temperature + " degrees Fahrenheit.\nThat's " + (tempcelsius) + " degrees Celsius.\n");
         }
 
         /* Sets a threshold for a nice day and then sends a message if the conditions meet the threshold */
-        private static void DetermineNiceDay(int temperature, string weather)
+        private static void DetermineNiceDay(double temperature, string weather)
         {
             /* threshold for nice day message set as variable */
             string nicedaythreshold = "Clear Sky";
@@ -224,7 +224,7 @@ namespace WeatherAPI
         }
 
         /* Defines what coat threshold is for coat message */
-        private static void DetermineCoat (int temperature)
+        private static void DetermineCoat (double temperature)
         {
             int coatthreshold = 60;
             if (temperature < coatthreshold)

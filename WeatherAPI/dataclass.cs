@@ -2,56 +2,6 @@
 
 namespace WeatherAPI
 {
-    /** "{
-     * \"coord\":
-     *  {
-     * \"lon\":-87.65,
-     * \"lat\":41.85
-     *  },
-     * \"weather\":
-     * [
-     *  {
-     *      \"id\":804,
-     *      \"main\":\"Clouds\",
-     *      \"description\":\"overcast clouds\",
-     *      \"icon\":\"04d\"
-     *  }
-     * ],
-     * \"base\":
-     * \"stations\",
-     * \"main\":
-     * {\"temp\":53.33,
-     * \"feels_like\":46.36,
-     * \"temp_min\":53.01,
-     * \"temp_max\":54,
-     * \"pressure\":1014,
-     * \"humidity\":58},
-     * \"visibility\":10000,
-     * \"wind\":
-     *  {
-     *      \"speed\":8.05,
-     *      \"deg\":130
-     *  },
-     * \"clouds\":
-     *  {
-     *      \"all\":90
-     *  },
-     * \"dt\":1616505007,
-     * \"sys\":
-     *  {
-     *      \"type\":1,
-     *      \"id\":4861,\
-     *      "country\":\"US\",
-     *      \"sunrise\":1616500095,
-     *      \"sunset\":1616544347},
-     *      \"timezone\":-18000,
-     *      \"id\":4887398,
-     *      \"name\":\"Chicago\",
-     *      \"cod\":200
-     *  }"
-     * **/
-
-    // Dataclass data = JsonConvert.DeserializeObject<Dataclass>(json); 
     public class Coord
     {
         public double lon { get; set; }
