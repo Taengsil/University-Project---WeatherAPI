@@ -17,11 +17,13 @@ namespace WeatherAPI
             ReadInput(args, ref cityName, ref stateCode);
 
             /* connects to API and generates WeatherData */
-            DataClass WeatherForecast = await IWeatherService.GetWeatherData(cityName, stateCode);
+            IWeatherService WeatherForecastData = null;
+            bool fetchingIsSuccess = false;
+            await WeatherForecastData.GetWeatherData(cityName, stateCode, fetchingIsSuccess);
 
             /* generates output messages */
-            if (WeatherGeneratorFromAPI.inputIsCorrect == true)
-            WeatherGeneratorFromAPI.WorkWeatherData();
+            if (fetchingIsSuccess)
+            WeatherGeneratorFromAPI.WorkWeatherData(cityName, stateCode);
         }
 
 

@@ -17,7 +17,7 @@ namespace WeatherAPI
 
     public interface IWeatherService
     {
-        Task<DataClass> GetWeatherData(string cityName, string stateCode);
+        Task<DataClass> GetWeatherData(string cityName, string stateCode, bool isSuccess);
     }
 
     public class WeatherService
@@ -26,24 +26,25 @@ namespace WeatherAPI
 
         public WeatherService()
         {
-            //TODO instantiate httpClient
+
+
 
         }
-        async Task<DataClass> GetWeatherData(string cityName, string stateCode)
-        {
+
+        async Task<DataClass> GetWeatherData(string cityName, string stateCode, bool isSuccess)
+        {   
+
             string baseUrl = "";
             GenerateUrl(ref baseUrl);
-
-            //TODO create uri
             var request = new HttpRequestMessage(HttpMethod.Get, baseUrl);
-
 
             using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
 
             if (response.IsSuccessStatusCode)
             {
                 // perhaps check some headers before deserialising
-
+                isSuccess = true;
+                
                 try
                 {
                     return await response.Content.ReadFromJsonAsync<DataClass>();
@@ -85,26 +86,12 @@ namespace WeatherAPI
         /* generating cityname and statecode as class variables for later use */
         public static string CityName;
         public static string StateCode;
-        public static bool inputIsCorrect = true;
 
         /* generating WeatherData as new WeatherForecast object */
         private static WeatherForecast WeatherData = new WeatherForecast();
-      
-
-
-        /* Fetches string from url and returns value as string*/
-        private static async Task<string> Fetch(string url)
-        {
-            /* fetching string from url */
-            using var client = new HttpClient();
-            var content = await client.GetStringAsync(url);
-
-            /* returning value as string */
-            return content;
-        }
 
         /* Prints the output of the data object as a pretty-printed json */
-        private static async Task PrintData (string json)
+        public static async Task PrintData (string json)
         {
             /** The commented code uses System.Text.Json to create
              *  a serialized .JSON file, however it does not 
@@ -126,7 +113,7 @@ namespace WeatherAPI
         }
 
         /* Transforming from data object to WeatherData object */
-        private static void ExtractWeatherData(dynamic data)
+        private static void ExtractWeatherData(DataClass data)
         {
             
             WeatherData.temp = data.main.temp;
@@ -135,7 +122,7 @@ namespace WeatherAPI
         }
 
         /* Method for the messages */
-        public static void WorkWeatherData()
+        public static void WorkWeatherData(string CityName, string StateCode)
         {
             /* formatting helper, just shows City Name and weather */
             Console.WriteLine("\n"+CityName + " weather:");
