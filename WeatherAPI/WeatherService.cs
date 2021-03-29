@@ -20,14 +20,10 @@ namespace WeatherAPI
 
             using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
 
-            /**/
-            Type GetStaticType<T>(T x) { return typeof(T); }
-
             if (response.IsSuccessStatusCode)
             {
                 // perhaps check some headers before deserialising
                 // ^^^ good call, i'll probably do unit testing on that instead
-                // Console.WriteLine("{1}\n\n\n{0}", response, GetStaticType(response));
 
                 Program.fetchingIsSuccess = true;
 
