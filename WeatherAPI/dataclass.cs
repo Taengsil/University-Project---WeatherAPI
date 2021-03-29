@@ -46,7 +46,7 @@ namespace WeatherAPI
         public int sunset { get; set; }
     }
 
-    public class Dataclass
+    public class DataClass
     {
         public Coord coord { get; set; }
         public List<Weather> weather { get; set; }

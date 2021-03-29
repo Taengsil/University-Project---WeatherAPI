@@ -13,35 +13,33 @@ namespace WeatherAPIUnitTest
         [TestMethod]
         public void testReadInput()
         {
-            string expectedCityName = "Chicago";
+            string initialCityName = "Chicago";
             string initialStateName = "IL";
+            string expectedCityName = "Chicago";
             string expectedStateCode = "US-IL";
             string[] arguments = { expectedCityName, initialStateName };
 
 
-            WeatherAPI.WeatherGeneratorFromAPI.ReadInput(arguments);
+            WeatherAPI.Program.ReadInput(arguments, ref initialCityName, ref initialStateName);
 
-            Assert.AreEqual(expectedCityName, WeatherGeneratorFromAPI.CityName);
-            Assert.AreEqual(expectedStateCode, WeatherGeneratorFromAPI.StateCode);
+            Assert.AreEqual(expectedCityName, initialCityName);
+            Assert.AreEqual(expectedStateCode, initialStateName);
         }
 
         [TestMethod]
-        public void testMainWithInvalidData()
+        public async Task testMainWithInvalidData()
         {
             string expectedCityName = "Chicoga";
             string initialStateName = "AR";
-            string expectedStateCode = "US-AR";
             string[] arguments = { expectedCityName, initialStateName };
             bool expectedValue = false;
 
 
             using (var sw = new StringWriter())
             {
-                Program.Main(arguments);
-                Assert.AreEqual(expectedCityName, WeatherGeneratorFromAPI.CityName);
-                Assert.AreEqual(expectedStateCode, WeatherGeneratorFromAPI.StateCode);
+                await Program.Main(arguments);
 
-                var result = WeatherGeneratorFromAPI.inputIsCorrect;
+                var result = true;
                 Assert.AreEqual(expectedValue, result);
             }
             
