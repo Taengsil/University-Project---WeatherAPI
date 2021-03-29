@@ -8,22 +8,26 @@ using System.Threading.Tasks;
 
 namespace WeatherAPI
 {
-    public class WeatherService
+    public class WeatherService : IWeatherService
     {
         private static HttpClient httpClient = new HttpClient();
 
-        async Task<DataClass> GetWeatherData(string cityName, string stateCode, bool isSuccess)
+        async Task<DataClass> IWeatherService.GetWeatherData(string cityName, string stateCode, bool isSuccess)
         {
-
-            string baseUrl = "";
-            GenerateUrl(cityName, stateCode, ref baseUrl);
+            
+            string baseUrl = GenerateUrl(cityName, stateCode);
             var request = new HttpRequestMessage(HttpMethod.Get, baseUrl);
 
             using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
 
+            /**/
+            Type GetStaticType<T>(T x) { return typeof(T); }
+
             if (response.IsSuccessStatusCode)
             {
                 // perhaps check some headers before deserialising
+                /**/
+                Console.WriteLine("{1}\n\n\n{0}", response, GetStaticType(response));
                 isSuccess = true;
 
                 try
@@ -44,8 +48,8 @@ namespace WeatherAPI
 
         }
 
-        /* Fetching API Key, Generating baseUrl */
-        private static void GenerateUrl(string CityName, string StateCode, ref string baseUrl)
+        /* Fetching API Key, generating and returning baseUrl when given CityName and StateCode*/
+        private string GenerateUrl(string CityName, string StateCode)
         {
             /* fetching data from appsettings.json */
             var config = new ConfigurationBuilder()
@@ -56,20 +60,13 @@ namespace WeatherAPI
             var weatherClientConfig = section.Get<WeatherClientConfig>();
 
             /* generating baseUrl */
-
-            baseUrl = weatherClientConfig.WeatherAPIUrl + CityName + "," + StateCode + weatherClientConfig.Options + weatherClientConfig.apiKey;
+            string baseUrl = weatherClientConfig.WeatherAPIUrl + CityName + "," + StateCode + weatherClientConfig.Options + weatherClientConfig.apiKey;
+            return baseUrl;
         }
 
-        public static async Task PrintToJson(IWeatherService Json)
+        public static async Task PrintToJson(DataClass Json)
         {
-            /** The commented code uses System.Text.Json to create
-             *  a serialized .JSON file, however it does not 
-             *  pretty-print and replaces the '\n' character with
-             *  '\u0020'                                          **/
-            JsonSerializerOptions options = new JsonSerializerOptions
-            {
-                WriteIndented = true
-            };
+
             string path = Directory.GetParent(System.Reflection.Assembly.GetExecutingAssembly().Location).FullName;
             string fileName = Path.Combine(path, "apidata.json");
             //using (StreamWriter file = File.CreateText(fileName))
@@ -78,7 +75,7 @@ namespace WeatherAPI
             //    serializer.Serialize(file, json);
             //}
             using FileStream createstream = File.Create(fileName);
-            await JsonSerializer.SerializeAsync(createstream, Json, options);
+            await JsonSerializer.SerializeAsync(createstream, Json);
         }
 
 

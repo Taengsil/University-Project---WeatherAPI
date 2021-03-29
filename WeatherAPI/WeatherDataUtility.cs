@@ -5,7 +5,7 @@ namespace WeatherAPI
 {
     public class WeatherDataUtility
     {
-        /* Prints the output of the data object as a pretty-printed json */
+        /* Reads the output of a json object (printed earlier) */
         public static WeatherForecast ReadFromJson(WeatherForecast weatherForecast)
         {
             string path = Directory.GetParent(System.Reflection.Assembly.GetExecutingAssembly().Location).FullName;

@@ -14,11 +14,12 @@ namespace WeatherAPI
             ReadInput(args, ref cityName, ref stateCode);
 
             /* connects to API and generates WeatherData */
-            IWeatherService weatherForecastData = null;
+            IWeatherService weatherService = new WeatherService();
             bool fetchingIsSuccess = false;
 
             /**/
-            await weatherForecastData.GetWeatherData(cityName, stateCode, fetchingIsSuccess);
+            DataClass weatherForecastData = await weatherService.GetWeatherData(cityName, stateCode, fetchingIsSuccess);
+            Console.WriteLine(fetchingIsSuccess);
 
             /* generates output messages */
             if (fetchingIsSuccess)
