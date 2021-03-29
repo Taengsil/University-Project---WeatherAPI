@@ -12,7 +12,7 @@ namespace WeatherAPI
     {
         private static HttpClient httpClient = new HttpClient();
 
-        async Task<DataClass> IWeatherService.GetWeatherData(string cityName, string stateCode, bool isSuccess)
+        async Task<DataClass> IWeatherService.GetWeatherData(string cityName, string stateCode)
         {
             
             string baseUrl = GenerateUrl(cityName, stateCode);
@@ -26,9 +26,10 @@ namespace WeatherAPI
             if (response.IsSuccessStatusCode)
             {
                 // perhaps check some headers before deserialising
-                /**/
-                Console.WriteLine("{1}\n\n\n{0}", response, GetStaticType(response));
-                isSuccess = true;
+                // ^^^ good call, i'll probably do unit testing on that instead
+                // Console.WriteLine("{1}\n\n\n{0}", response, GetStaticType(response));
+
+                Program.fetchingIsSuccess = true;
 
                 try
                 {

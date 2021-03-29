@@ -5,6 +5,7 @@ namespace WeatherAPI
 {
     public class Program
     {
+        public static bool fetchingIsSuccess = false;
         public static async Task Main(string[] args)
         {
             string cityName=null;
@@ -15,14 +16,11 @@ namespace WeatherAPI
 
             /* connects to API and generates WeatherData */
             IWeatherService weatherService = new WeatherService();
-            bool fetchingIsSuccess = false;
 
-            /**/
-            DataClass weatherForecastData = await weatherService.GetWeatherData(cityName, stateCode, fetchingIsSuccess);
-            Console.WriteLine(fetchingIsSuccess);
+            DataClass weatherForecastData = await weatherService.GetWeatherData(cityName, stateCode);
 
             /* generates output messages */
-            if (fetchingIsSuccess)
+            if (Program.fetchingIsSuccess)
             {
                 await WeatherService.PrintToJson(weatherForecastData);
 

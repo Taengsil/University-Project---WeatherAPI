@@ -4,7 +4,7 @@ namespace WeatherAPI
 {
     public interface IWeatherService
     {
-        Task<DataClass> GetWeatherData(string cityName, string stateCode, bool isSuccess);
+        Task<DataClass> GetWeatherData(string cityName, string stateCode);
     }
 
 }
