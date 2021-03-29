@@ -7,110 +7,59 @@
 using System;
 using System.IO;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 
 namespace WeatherAPI
 {
-    public class WeatherGeneratorFromAPI
+
+    public interface IWeatherService
     {
-        /* generating cityname and statecode as class variables for later use */
-        public static string CityName;
-        public static string StateCode;
-        public static bool inputIsCorrect = true;
+        Task<DataClass> GetWeatherData(string cityName, string stateCode);
+    }
 
-        /* generating WeatherData as new WeatherForecast object */
-        private static WeatherForecast WeatherData = new WeatherForecast();
+    public class WeatherService
+    {
+        private HttpClient httpClient;
 
-        /* Reads user keyboard input and formats it properly */
-        public static void ReadInput(string[] args)
+        public WeatherService()
         {
-            string StateName="";
-            bool notReadFromConsole = true;
-            if (args[0] != null && args[1] != null)
-            {
-                CityName = args[0];
-                StateName = args[1];
-                notReadFromConsole = false;
-                Console.WriteLine("City name has been read from console as {0}; State name has been read from console as {1}", CityName, StateName);
-            }
-            else if (args[0] == null && args[1] == null)
-            {
-                CityName = Console.ReadLine();
-                Console.WriteLine("Enter a city name and a state code:");
-            }
+            //TODO instantiate httpClient
 
-            /** in the e-mail, the input is in one line. However, the user could type one line individually. The following will
-            * check if the string is inputted in one go ("Chicago, IL") and split it into the correct variables, or if the user
-            * inserts them separately, the program will pick up the second line correctly. **/
-            
-            /** if the Cityname contains both Cityname and state name, split it and generate it
-            * otherwise, read the state name
-            **/
-
-            if (CityName.Contains(' ') && notReadFromConsole == true)
-            {
-                string[] word = CityName.Split(' ');
-                CityName = word[0];
-                StateName = word[1];
-            }
-            else if (notReadFromConsole == true)
-            {
-                StateName = Console.ReadLine();
-                /** if user only inputted CityName, but then adds a space. 
-                * example input: 
-                * Chicago
-                * IL IL
-                * **/
-                if (StateName.Contains(' '))
-                {
-                    string[] word = CityName.Split(' ');
-                    StateName = word[0];
-                }
-            }
-            /* transforms state abbreviation (AR) to state code (US-AR) */
-            StateCode = GetStateCode(StateName);
         }
-
-        /** Processing state abbreviation (AR) to state code (US-AR) 
-         Openweather uses ISO 3166 codes, therefore we convert it to ISO 3166 **/
-        private static string GetStateCode(string StateName)
-        {
-            
-            StateName = StateName.ToUpper();
-
-            string StateCode = "US-" + StateName;
-            return StateCode;
-        }
-
-        /* Downloading the JSON string to var json, then deserializing it as a dynamic object in var data; */
-        public static async Task GetWeather()
+        async Task<DataClass> GetWeatherData(string cityName, string stateCode)
         {
             string baseUrl = "";
             GenerateUrl(ref baseUrl);
-            try
+
+            //TODO create uri
+            var request = new HttpRequestMessage(HttpMethod.Get, baseUrl);
+
+
+            using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+
+            if (response.IsSuccessStatusCode)
             {
-                var json = Fetch(baseUrl).Result;
-                await PrintData(json);
-                Dataclass data = JsonConvert.DeserializeObject<Dataclass>(json);
-                /* if there is data, generate it following the WeatherData object instructions */
-                if (data != null)
+                // perhaps check some headers before deserialising
+
+                try
                 {
-                    ExtractWeatherData(data);
+                    return await response.Content.ReadFromJsonAsync<DataClass>();
                 }
-                /* else, if there is no data, print "no data" **/
-                else
+                catch (NotSupportedException) // When content type is not valid
                 {
-                    Console.WriteLine("No data");
+                    Console.WriteLine("The content type is not supported.");
+                }
+                catch (JsonException) // Invalid JSON
+                {
+                    Console.WriteLine("Invalid JSON.");
                 }
             }
-            catch (Exception InvalidData)
-            {
-                inputIsCorrect = false;
-                Console.WriteLine("\nException caught: Invalid City");
-            }
+
+            return null;
+
         }
 
         /* Fetching API Key, Generating baseUrl */
@@ -126,8 +75,22 @@ namespace WeatherAPI
 
             /* generating baseUrl */
 
-            baseUrl = weatherClientConfig.WeatherAPIUrl + CityName + "," + StateCode + weatherClientConfig.Options + weatherClientConfig.apiKey;
+            baseUrl = weatherClientConfig.WeatherAPIUrl + WeatherGeneratorFromAPI.CityName + "," + WeatherGeneratorFromAPI.StateCode + weatherClientConfig.Options + weatherClientConfig.apiKey;
         }
+
+
+    }
+    public class WeatherGeneratorFromAPI
+    {
+        /* generating cityname and statecode as class variables for later use */
+        public static string CityName;
+        public static string StateCode;
+        public static bool inputIsCorrect = true;
+
+        /* generating WeatherData as new WeatherForecast object */
+        private static WeatherForecast WeatherData = new WeatherForecast();
+      
+
 
         /* Fetches string from url and returns value as string*/
         private static async Task<string> Fetch(string url)
