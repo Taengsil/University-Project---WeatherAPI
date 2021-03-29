@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace WeatherAPI
 {
     public class Program
     {
-        async Task Main(string[] args)
+        public static async Task Main(string[] args)
         {
             string cityName=null;
             string stateCode=null;
@@ -17,13 +14,22 @@ namespace WeatherAPI
             ReadInput(args, ref cityName, ref stateCode);
 
             /* connects to API and generates WeatherData */
-            IWeatherService WeatherForecastData = null;
+            IWeatherService weatherForecastData = null;
             bool fetchingIsSuccess = false;
-            await WeatherForecastData.GetWeatherData(cityName, stateCode, fetchingIsSuccess);
+
+            /**/
+            await weatherForecastData.GetWeatherData(cityName, stateCode, fetchingIsSuccess);
 
             /* generates output messages */
             if (fetchingIsSuccess)
-            WeatherGeneratorFromAPI.WorkWeatherData(cityName, stateCode);
+            {
+                await WeatherService.PrintToJson(weatherForecastData);
+
+                WeatherForecast weatherForecast = new WeatherForecast();
+                weatherForecast = WeatherDataUtility.ReadFromJson(weatherForecast);
+                
+                WeatherConsoleOperations.WorkWeatherData(cityName, stateCode, weatherForecast);
+            }
         }
 
 
@@ -42,7 +48,7 @@ namespace WeatherAPI
             }
             else if (args[0] == null && args[1] == null)
             {
-                WeatherGeneratorFromAPI.CityName = Console.ReadLine();
+                CityName = Console.ReadLine();
                 Console.WriteLine("Enter a city name and a state code:");
             }
 
@@ -54,10 +60,10 @@ namespace WeatherAPI
             * otherwise, read the state name
             **/
 
-            if (WeatherGeneratorFromAPI.CityName.Contains(' ') && notReadFromConsole == true)
+            if (CityName.Contains(' ') && notReadFromConsole == true)
             {
-                string[] word = WeatherGeneratorFromAPI.CityName.Split(' ');
-                WeatherGeneratorFromAPI.CityName = word[0];
+                string[] word = CityName.Split(' ');
+                CityName = word[0];
                 StateName = word[1];
             }
             else if (notReadFromConsole == true)
@@ -70,12 +76,12 @@ namespace WeatherAPI
                 * **/
                 if (StateName.Contains(' '))
                 {
-                    string[] word = WeatherGeneratorFromAPI.CityName.Split(' ');
+                    string[] word = CityName.Split(' ');
                     StateName = word[0];
                 }
             }
             /* transforms state abbreviation (AR) to state code (US-AR) */
-            WeatherGeneratorFromAPI.StateCode = GetStateCode(StateName);
+            StateCode = GetStateCode(StateName);
         }
 
         /** Processing state abbreviation (AR) to state code (US-AR) 
