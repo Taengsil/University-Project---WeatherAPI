@@ -1,37 +1,37 @@
 ﻿using System;
 
-namespace WeatherAPI
+namespace OpenWeatherAPIResponse
 {
-    public class WeatherConsoleOperations
+    public class WeatherConsole
     {
         /* Method for the messages */
-        public static void WorkWeatherData(string CityName, string StateCode, WeatherForecast WeatherData)
+        public static void ProcessWeatherData(string cityName, string stateCode, WeatherForecast weatherData)
         {
             /* formatting helper, just shows City Name and weather */
-            Console.WriteLine("\n"+CityName + " weather:");
+            Console.WriteLine("\n"+cityName + " weather:");
 
             /* prints temperature in fahrenheit and celsius */
-            DetermineTemperature(WeatherData.temp);
+            DetermineTemperature(weatherData.temp);
 
             /** input: wind degrees, wind direction
              *  returns wind direction as string
              *  output: WeatherData.winddirection **/
-            WeatherData.winddirection = CalculateWindDirection(WeatherData.winddegrees);
+            weatherData.windDirection = CalculateWindDirection(weatherData.windDegrees);
 
 
-            Console.WriteLine("The wind is currently blowing {0}.\n", WeatherData.winddirection);
+            Console.WriteLine("The wind is currently blowing {0}.\n", weatherData.windDirection);
 
             /* based on the temperature and weather condition, sends a message that it is a nice day outside */
-            DetermineNiceDay(WeatherData.temp, WeatherData.weather);
+            DetermineNiceDay(weatherData.temp, weatherData.weather);
 
             /* based on the temperature, sends a message that the user should use a coat */
-            DetermineCoat(WeatherData.temp);
+            DetermineCoat(weatherData.temp);
 
             /* based on the value of the weather field, sends a message that the user should bring an umbrella */
-            DetermineUmbrella(WeatherData.weather);
+            DetermineUmbrella(weatherData.weather);
 
             /* based on the value of the weather field, sends a message that it is cloudy */
-            DetermineClouds(WeatherData.weather);
+            DetermineClouds(weatherData.weather);
         }
 
         /* Prints out a message with the temperature in Fahrenheit and Celsius */
@@ -87,51 +87,51 @@ namespace WeatherAPI
         }
 
         /* Checks which way the wind blows by comparing which part of the circle the orientation is */
-        private static string CalculateWindDirection(int winddegrees)
+        private static string CalculateWindDirection(int windDegrees)
         {
-            if (winddegrees == 0)
+            if (windDegrees == 0)
             {
-                /* |^ */
+                // |^ 
                 return "North";
             }
-            else if (winddegrees > 0 && winddegrees < 90)
+            else if (windDegrees > 0 && windDegrees < 90)
             {
-                /* /^ */
+                // /^ 
                 return "North-East";
             }
-            else if (winddegrees == 90)
+            else if (windDegrees == 90)
             {
-                /* -> */
+                // -> 
                 return "East";
             }
-            else if (winddegrees > 90 && winddegrees < 180)
+            else if (windDegrees > 90 && windDegrees < 180)
             {
-                /* \v */
+                // \v 
                 return "South-East";
             }
-            else if (winddegrees == 180)
+            else if (windDegrees == 180)
             {
-                /* |v */
+                // |v 
                 return "South";
             }
-            else if (winddegrees > 180 && winddegrees < 270)
+            else if (windDegrees > 180 && windDegrees < 270)
             {
-                /* /v */
+                // /v 
                 return "South-West";
             }
-            else if (winddegrees == 270)
+            else if (windDegrees == 270)
             {
-                /* <- */
+                // <-
                 return "West";
             }
-            else if (winddegrees > 270 && winddegrees < 360)
+            else if (windDegrees > 270 && windDegrees < 360)
             {
-                /* \^ */
+                // \^ 
                 return "North-West";
             }
-            else if (winddegrees == 360)
+            else if (windDegrees == 360)
             {
-                /* |^ */
+                // |^ 
                 return "North";
             }
                 /* in case of the wind value somehow being above 360 degrees */

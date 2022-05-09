@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace WeatherAPI
+namespace OpenWeatherAPIResponse
 {
     public class Coord
     {
@@ -46,7 +46,7 @@ namespace WeatherAPI
         public int sunset { get; set; }
     }
 
-    public class DataClass
+    public class OpenWeatherAPIResponse
     {
         public Coord coord { get; set; }
         public List<Weather> weather { get; set; }

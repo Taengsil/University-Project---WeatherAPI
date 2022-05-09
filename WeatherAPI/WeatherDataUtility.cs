@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Text.Json;
 
-namespace WeatherAPI
+namespace OpenWeatherAPIResponse
 {
     public class WeatherDataUtility
     {
@@ -12,19 +12,19 @@ namespace WeatherAPI
             string fileName = Path.Combine(path, "apidata.json");
             string jsonString = File.ReadAllText(fileName);
 
-            DataClass data = JsonSerializer.Deserialize<DataClass>(jsonString);
+            OpenWeatherAPIResponse data = JsonSerializer.Deserialize<OpenWeatherAPIResponse>(jsonString);
 
             ExtractWeatherData(data, weatherForecast);
             return weatherForecast;
         }
 
         /* Transforming from data object to WeatherData object */
-        public static void ExtractWeatherData(DataClass data, WeatherForecast WeatherData)
+        public static void ExtractWeatherData(OpenWeatherAPIResponse data, WeatherForecast weatherData)
         {
 
-            WeatherData.temp = data.main.temp;
-            WeatherData.winddegrees = data.wind.deg;
-            WeatherData.weather = data.weather[0].main;
+            weatherData.temp = data.main.temp;
+            weatherData.windDegrees = data.wind.deg;
+            weatherData.weather = data.weather[0].main;
         }
     }
 }
