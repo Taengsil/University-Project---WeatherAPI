@@ -1,4 +1,4 @@
-- API Objects: Request/Response object, other utility objects
+- API Objects: Request/Response object, WeatherForecast object
 - API Interface: IWeatherInterface
 
 - WeatherConsole: handles most of the console-printing operations and structuring it;
