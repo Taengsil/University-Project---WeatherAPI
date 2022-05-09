@@ -6,13 +6,13 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace WeatherAPI
+namespace OpenWeatherAPIResponse
 {
     public class WeatherService : IWeatherService
     {
         private static HttpClient httpClient = new HttpClient();
 
-        async Task<DataClass> IWeatherService.GetWeatherData(string cityName, string stateCode)
+        async Task<OpenWeatherAPIResponse> IWeatherService.GetWeatherData(string cityName, string stateCode)
         {
             
             string baseUrl = GenerateUrl(cityName, stateCode);
@@ -22,14 +22,11 @@ namespace WeatherAPI
 
             if (response.IsSuccessStatusCode)
             {
-                // perhaps check some headers before deserialising
-                // ^^^ good call, i'll probably do unit testing on that instead
-
-                Program.fetchingIsSuccess = true;
+                WeatherProcessor.fetchingIsSuccess = true;
 
                 try
                 {
-                    return await response.Content.ReadFromJsonAsync<DataClass>();
+                    return await response.Content.ReadFromJsonAsync<OpenWeatherAPIResponse>();
                 }
                 catch (NotSupportedException) // When content type is not valid
                 {
@@ -53,15 +50,15 @@ namespace WeatherAPI
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                 .AddJsonFile("appsettings.json").Build();
 
-            var section = config.GetSection(nameof(WeatherClientConfig));
-            var weatherClientConfig = section.Get<WeatherClientConfig>();
+            var section = config.GetSection(nameof(OpenWeatherAPIRequest));
+            var openWeatherAPIRequest = section.Get<OpenWeatherAPIRequest>();
 
             /* generating baseUrl */
-            string baseUrl = weatherClientConfig.WeatherAPIUrl + CityName + "," + StateCode + weatherClientConfig.Options + weatherClientConfig.apiKey;
+            string baseUrl = openWeatherAPIRequest.weatherAPIUrl + CityName + "," + StateCode + openWeatherAPIRequest.options + openWeatherAPIRequest.apiKey;
             return baseUrl;
         }
 
-        public static async Task PrintToJson(DataClass Json)
+        public static async Task PrintToJson(OpenWeatherAPIResponse Json)
         {
 
             string path = Directory.GetParent(System.Reflection.Assembly.GetExecutingAssembly().Location).FullName;

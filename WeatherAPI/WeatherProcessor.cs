@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace WeatherAPI
+namespace OpenWeatherAPIResponse
 {
-    public class Program
+    public class WeatherProcessor
     {
         public static bool fetchingIsSuccess = false;
         public static async Task Main(string[] args)
@@ -16,18 +16,17 @@ namespace WeatherAPI
 
             /* connects to API and generates WeatherData */
             IWeatherService weatherService = new WeatherService();
+            OpenWeatherAPIResponse weatherForecastData = await weatherService.GetWeatherData(cityName, stateCode);
 
-            DataClass weatherForecastData = await weatherService.GetWeatherData(cityName, stateCode);
-
-            /* generates output messages */
-            if (Program.fetchingIsSuccess)
+            /* generates output messages on success*/
+            if (WeatherProcessor.fetchingIsSuccess)
             {
                 await WeatherService.PrintToJson(weatherForecastData);
 
                 WeatherForecast weatherForecast = new WeatherForecast();
                 weatherForecast = WeatherDataUtility.ReadFromJson(weatherForecast);
                 
-                WeatherConsoleOperations.WorkWeatherData(cityName, stateCode, weatherForecast);
+                WeatherConsole.ProcessWeatherData(cityName, stateCode, weatherForecast);
             }
         }
 
@@ -51,13 +50,12 @@ namespace WeatherAPI
                 Console.WriteLine("Enter a city name and a state code:");
             }
 
-            /** in the e-mail, the input is in one line. However, the user could type one line individually. The following will
-            * check if the string is inputted in one go ("Chicago, IL") and split it into the correct variables, or if the user
-            * inserts them separately, the program will pick up the second line correctly. **/
-
-            /** if the Cityname contains both Cityname and state name, split it and generate it
-            * otherwise, read the state name
-            **/
+            /* The assumption is that the input is in one line. However, the user could type one line individually. The following will
+             check if the string is inputted in one go ("Chicago, IL") and split it into the correct variables, and in the case the user
+             inserts them separately, the program will pick up the second line correctly.
+             if the Cityname contains both Cityname and state name, split it and generate it
+             otherwise, read the state name
+            */
 
             if (CityName.Contains(' ') && notReadFromConsole == true)
             {
@@ -68,23 +66,23 @@ namespace WeatherAPI
             else if (notReadFromConsole == true)
             {
                 StateName = Console.ReadLine();
-                /** if user only inputted CityName, but then adds a space. 
-                * example input: 
-                * Chicago
-                * IL IL
-                * **/
+                /* if user only inputted CityName, but then adds a space. 
+                 example input: 
+                 Chicago
+                 IL IL
+                 */
                 if (StateName.Contains(' '))
                 {
                     string[] word = CityName.Split(' ');
                     StateName = word[0];
                 }
             }
-            /* transforms state abbreviation (AR) to state code (US-AR) */
+            // transforms state abbreviation (AR) to state code (US-AR) 
             StateCode = GetStateCode(StateName);
         }
 
-        /** Processing state abbreviation (AR) to state code (US-AR) 
-         Openweather uses ISO 3166 codes, therefore we convert it to ISO 3166 **/
+        /* Processing state abbreviation (AR) to state code (US-AR)
+         Openweather uses ISO 3166 codes, therefore we convert it to ISO 3166 */
         private static string GetStateCode(string StateName)
         {
 

@@ -1,10 +1,10 @@
-﻿namespace WeatherAPI
+﻿namespace OpenWeatherAPIResponse
 {
     public class WeatherForecast
     {
         public double temp { get; set; }
-        public int winddegrees { get; set; }
+        public int windDegrees { get; set; }
         public string weather { get; set; }
-        public string winddirection { get; set; }
+        public string windDirection { get; set; }
     }
 }

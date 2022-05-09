@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using WeatherAPI;
+using OpenWeatherAPIResponse;
 using System.Threading.Tasks;
 
 namespace WeatherAPIUnitTest
@@ -9,6 +9,7 @@ namespace WeatherAPIUnitTest
     [TestClass]
     public class WeatherTest
     {
+        //To do: Add mocks and detailed unit tests
 
         [TestMethod]
         public void testReadInput()
@@ -20,7 +21,7 @@ namespace WeatherAPIUnitTest
             string[] arguments = { expectedCityName, initialStateName };
 
 
-            WeatherAPI.Program.ReadInput(arguments, ref initialCityName, ref initialStateName);
+            WeatherProcessor.ReadInput(arguments, ref initialCityName, ref initialStateName);
 
             Assert.AreEqual(expectedCityName, initialCityName);
             Assert.AreEqual(expectedStateCode, initialStateName);
@@ -37,7 +38,7 @@ namespace WeatherAPIUnitTest
 
             using (var sw = new StringWriter())
             {
-                await Program.Main(arguments);
+                await WeatherProcessor.Main(arguments);
 
                 var result = true;
                 Assert.AreEqual(expectedValue, result);
