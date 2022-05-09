@@ -1,2 +1,7 @@
-Unit testing isn't up-to-date due to the fact that a lot of methods and logic were restructured.
-Will get to it after confirmation that current iteration is good.
+- API Objects: Request/Response object, other utility objects
+- API Interface: IWeatherInterface
+
+- WeatherConsole: handles most of the console-printing operations and structuring it;
+- WeatherDataUtility: handles reading the data from the JSON object returned by the API;
+- WeatherProcessor: handles reading and calling respective methods;
+- WeatherService: handles building the API request and calling the OpenWeatherAPI;
