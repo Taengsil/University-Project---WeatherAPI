@@ -22,7 +22,6 @@ namespace OpenWeatherAPIResponse
 
             if (response.IsSuccessStatusCode)
             {
-
                 WeatherProcessor.fetchingIsSuccess = true;
 
                 try
