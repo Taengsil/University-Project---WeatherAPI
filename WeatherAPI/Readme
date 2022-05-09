@@ -5,3 +5,19 @@
 - WeatherDataUtility: handles reading the data from the JSON object returned by the API;
 - WeatherProcessor: handles reading and calling respective methods;
 - WeatherService: handles building the API request and calling the OpenWeatherAPI;
+
+Requires an appsettings.json file in the WeatherAPI folder, formatted as such:
+
+{
+  "OpenWeatherAPIRequest": {
+    "isEnabled": true,
+    "weatherAPIUrl": "http://api.openweathermap.org/data/2.5/weather?q=",
+    "options": "&units=imperial&appid=",
+    "apiKey": ""
+  }
+}
+
+isEnabled: does not do anything yet, used for turning on/off the API call
+weatherAPIUrl: base url to build the request on
+options: additional options, always ends in &appid; the code was built with imperial in mind
+apiKey: Account-based, each user should get theirs from https://openweathermap.org/api
