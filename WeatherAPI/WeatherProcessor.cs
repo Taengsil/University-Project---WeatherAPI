@@ -19,7 +19,7 @@ namespace OpenWeatherAPIResponse
             OpenWeatherAPIResponse weatherForecastData = await weatherService.GetWeatherData(cityName, stateCode);
 
             /* generates output messages on success*/
-            if (WeatherProcessor.fetchingIsSuccess)
+            if (fetchingIsSuccess)
             {
                 await WeatherService.PrintToJson(weatherForecastData);
 
