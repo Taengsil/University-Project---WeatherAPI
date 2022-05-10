@@ -85,6 +85,16 @@ namespace OpenWeatherAPIResponse
             string baseUrl;
             if (openWeatherAPIRequest.isEnabled == true)
             {
+                if (openWeatherAPIRequest.weatherAPIUrl != "http://api.openweathermap.org/data/2.5/weather?q=")
+                {
+                    Console.WriteLine("Invalid weatherAPI url. Using default URL.\n");
+                    openWeatherAPIRequest.weatherAPIUrl = "http://api.openweathermap.org/data/2.5/weather?q=";
+                }
+                if (openWeatherAPIRequest.options != "&units=imperial&appid=")
+                {
+                    Console.WriteLine("Invalid options. Using default options.\n");
+                    openWeatherAPIRequest.options = "&units=imperial&appid=";
+                }
                 baseUrl = openWeatherAPIRequest.weatherAPIUrl + CityName + "," + StateCode + openWeatherAPIRequest.options + openWeatherAPIRequest.apiKey;
             }
             else
