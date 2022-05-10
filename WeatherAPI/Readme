@@ -17,7 +17,7 @@ Requires an appsettings.json file in the WeatherAPI folder, formatted as such:
   }
 }
 
-isEnabled: does not do anything yet, used for turning on/off the API call
+isEnabled: Used for turning on/off the API call; In case of error or this being set to false, uses local variables
 weatherAPIUrl: base url to build the request on
 options: additional options, always ends in &appid; the code was built with imperial in mind
 apiKey: Account-based, each user should get theirs from https://openweathermap.org/api
