@@ -7,30 +7,15 @@ namespace OpenWeatherAPIResponse
         /* Method for the messages */
         public static void ProcessWeatherData(string cityName, string stateCode, WeatherForecast weatherData)
         {
-            /* formatting helper, just shows City Name and weather */
-            Console.WriteLine("\n"+cityName + " weather:");
-
-            /* prints temperature in fahrenheit and celsius */
+            Console.WriteLine(cityName + " weather:");
             DetermineTemperature(weatherData.temp);
 
-            /** input: wind degrees, wind direction
-             *  returns wind direction as string
-             *  output: WeatherData.winddirection **/
             weatherData.windDirection = CalculateWindDirection(weatherData.windDegrees);
-
-
             Console.WriteLine("The wind is currently blowing {0}.\n", weatherData.windDirection);
 
-            /* based on the temperature and weather condition, sends a message that it is a nice day outside */
             DetermineNiceDay(weatherData.temp, weatherData.weather);
-
-            /* based on the temperature, sends a message that the user should use a coat */
-            DetermineCoat(weatherData.temp);
-
-            /* based on the value of the weather field, sends a message that the user should bring an umbrella */
+            DetermineCoat(weatherData.temp, weatherData.weather);
             DetermineUmbrella(weatherData.weather);
-
-            /* based on the value of the weather field, sends a message that it is cloudy */
             DetermineClouds(weatherData.weather);
         }
 
@@ -41,7 +26,7 @@ namespace OpenWeatherAPIResponse
             double tempcelsius = (temperature - 32) * 5 / 9;
             tempcelsius = (double)System.Math.Round(tempcelsius, 2);
             /* degrees fahrenheit + celsius print */
-            Console.WriteLine("It's currently " + temperature + " degrees Fahrenheit.\nThat's " + (tempcelsius) + " degrees Celsius.\n");
+            Console.WriteLine("It's currently " + temperature + " degrees Fahrenheit.\nThat's " + (tempcelsius) + " degrees Celsius.");
         }
 
         /* Sets a threshold for a nice day and then sends a message if the conditions meet the threshold */
@@ -52,7 +37,11 @@ namespace OpenWeatherAPIResponse
 
             if (temperature > 60 && weather == nicedaythreshold)
             {
-                Console.WriteLine("It's a nice day outside.\n");
+                Console.WriteLine("It's a nice day outside.");
+            }
+            else if (temperature == 50 && weather == "local.weather.main")
+            {
+                Console.WriteLine("It's a very debuggy weather.");
             }
         }
 
@@ -62,7 +51,11 @@ namespace OpenWeatherAPIResponse
             string[] badweather = { "snow", "rain", "extreme" };
             if (weather.ToLower() == badweather[0] || weather.ToLower() == badweather[1] || weather.ToLower() == badweather[2])
             {
-                Console.WriteLine("You should bring an umbrella.\n");
+                Console.WriteLine("You should bring an umbrella.");
+            }
+            else if (weather.ToLower() == "local.weather.main")
+            {
+                Console.WriteLine("You should bring a debugging umbrella.");
             }
         }
 
@@ -72,17 +65,25 @@ namespace OpenWeatherAPIResponse
             string cloudthreshold = "clouds";
             if (weather.ToLower() == cloudthreshold)
             {
-                Console.WriteLine("It's cloudy outside.\n");
+                Console.WriteLine("It's cloudy outside.");
+            }
+            else if (weather.ToLower() == "local.weather.main")
+            {
+                Console.WriteLine("There are debugging clouds outside.");
             }
         }
 
         /* Defines what coat threshold is for coat message */
-        private static void DetermineCoat (double temperature)
+        private static void DetermineCoat (double temperature, string weather)
         {
             int coatthreshold = 60;
-            if (temperature < coatthreshold)
+            if (temperature < coatthreshold && weather != "local.weather.main")
             {
-                Console.WriteLine("You should bring a coat.\n");
+                Console.WriteLine("You should bring a coat.");
+            }
+            else if (weather == "local.weather.main")
+            {
+                Console.WriteLine("You should bring a debugging coat");
             }
         }
 
