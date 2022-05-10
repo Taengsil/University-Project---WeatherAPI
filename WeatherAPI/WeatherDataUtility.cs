@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text.Json;
 
 namespace OpenWeatherAPIResponse
@@ -19,12 +20,12 @@ namespace OpenWeatherAPIResponse
         }
 
         /* Transforming from data object to WeatherData object */
-        public static void ExtractWeatherData(OpenWeatherAPIResponse data, WeatherForecast weatherData)
+        public static void ExtractWeatherData(OpenWeatherAPIResponse _data, WeatherForecast weatherData)
         {
 
-            weatherData.temp = data.main.temp;
-            weatherData.windDegrees = data.wind.deg;
-            weatherData.weather = data.weather[0].main;
+            weatherData.temp = _data.main.temp;
+            weatherData.windDegrees = _data.wind.deg;
+            weatherData.weather = _data.weather[0].main;
         }
     }
 }
