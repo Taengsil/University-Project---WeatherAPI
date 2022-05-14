@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text.Json;
 
-namespace OpenWeatherAPIResponse
+namespace WeatherAPI
 {
     public class WeatherDataUtility
     {
