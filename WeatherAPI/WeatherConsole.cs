@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OpenWeatherAPIResponse
+namespace WeatherAPI
 {
     public class WeatherConsole
     {
