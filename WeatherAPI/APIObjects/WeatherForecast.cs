@@ -1,4 +1,4 @@
-﻿namespace OpenWeatherAPIResponse
+﻿namespace WeatherAPI
 {
     public class WeatherForecast
     {
