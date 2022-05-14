@@ -1,4 +1,4 @@
-﻿namespace OpenWeatherAPIRequest
+﻿namespace WeatherAPI
 {
     class OpenWeatherAPIRequest
     {
