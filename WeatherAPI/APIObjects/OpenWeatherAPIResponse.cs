@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace OpenWeatherAPIResponse
+namespace WeatherAPI
 {
     public class OpenWeatherAPIResponse
     {
