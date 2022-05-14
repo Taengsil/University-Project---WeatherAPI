@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace OpenWeatherAPIResponse
+namespace WeatherAPI
 {
     public class WeatherProcessor
     {
