@@ -3,7 +3,7 @@
     class OpenWeatherAPIRequest
     {
         /// <summary>
-        /// 
+        /// Dictates whether the program uses local fake values or calls the web API
         /// </summary>
         public bool isEnabled { get; set; }
         
