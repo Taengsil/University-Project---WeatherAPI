@@ -6,7 +6,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace OpenWeatherAPIResponse
+namespace WeatherAPI
 {
     public class WeatherService : IWeatherService
     {
