@@ -1,6 +1,6 @@
 <h1>Project Description</h1>
 
-<p>A project I have worked on for an interview at GBET, and then used as my master's thesis in University, and my first project that had unit tests. </p> 
+<p>A project I have worked on for an interview at GBET, then used as my master's thesis in University, and my first project that had unit tests. </p> 
 
 <h1>Interview Project Requirements</h1>
 
