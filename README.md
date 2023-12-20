@@ -32,7 +32,7 @@ https://docs.microsoft.com/en-us/dotnet/api/system.net.http.httpclient?view=net-
 
 <h3> Adding appsettings.json </h3>
 
-<p>In the WeatherAPI folder, create a file called **appsettings.json** with the following text: </p>
+<p>In the WeatherAPI folder, create a file called appsettings.json with the following text: </p>
 
 <br>
 
