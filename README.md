@@ -55,7 +55,7 @@ Create an account for the free version of [OpenWeatherMap](https://openweatherma
 
 <h1> Project Runtime Explanation </h1>
 
-In the appsettings.json, the values weatherAPIUrl, options and apiKey are combined together to form a link. An example link would be http://api.openweathermap.org/data/2.5/weather?q=&units=imperial&appid=apikey123 format, with apikey123 being replaced by a proper api key. 
+In the appsettings.json, the values weatherAPIUrl, options and apiKey are combined together to form a link. An example link would be http://api.openweathermap.org/data/2.5/weather?q=&units=imperial&appid=apikey123 format, with "apikey123" being replaced by a proper api key. 
 If the setting "isEnabled" is set to false, the app will use a default location and weather, and then process the settings based on that.
 
 (More to be added)
